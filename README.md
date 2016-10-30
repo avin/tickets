@@ -10,4 +10,7 @@ meteor yarn add bcrypt
 meteor yarn add moment
 
 meteor remove insecure
+meteor remove autopublish
+
+meteor add practicalmeteor:mocha
 ```
