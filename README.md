@@ -8,4 +8,6 @@ meteor add session
 meteor add accounts-ui accounts-password
 meteor yarn add bcrypt
 meteor yarn add moment
+
+meteor remove insecure
 ```

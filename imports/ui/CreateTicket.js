@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {FieldGroup, FormGroup, ControlLabel, FormControl, Button} from "react-bootstrap";
-import {Tickets} from "/imports/api/tickets";
+import {Meteor} from "meteor/meteor";
 
 export default class CreateTicket extends React.Component {
 
@@ -18,13 +18,8 @@ export default class CreateTicket extends React.Component {
         const title = ReactDOM.findDOMNode(this.refs.title).value.trim();
         const content = ReactDOM.findDOMNode(this.refs.content).value.trim();
 
-        Tickets.insert({
-            title,
-            content,
-            owner: Meteor.userId(),
-            username: Meteor.user().username,
-            createdAt: new Date()
-        });
+
+        Meteor.call('tickets.insert', title, content);
 
         ReactDOM.findDOMNode(this.refs.title).value = '';
         ReactDOM.findDOMNode(this.refs.content).value = '';

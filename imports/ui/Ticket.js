@@ -5,6 +5,7 @@ import {FormGroup, Button, FormControl, ControlLabel} from "react-bootstrap";
 import bootbox from "bootbox";
 import moment from "moment";
 import {createContainer} from "meteor/react-meteor-data";
+import {Meteor} from 'meteor/meteor';
 
 class Ticket extends React.Component {
 
@@ -25,13 +26,7 @@ class Ticket extends React.Component {
         const title = ReactDOM.findDOMNode(this.refs.title).value.trim();
         const content = ReactDOM.findDOMNode(this.refs.content).value.trim();
 
-        TicketsCollection.update(ticket._id, {
-            $set: {
-                title,
-                content,
-                updatedAt: new Date()
-            }
-        });
+        Meteor.call('tickets.update', ticket._id, title, content);
 
         this.setState({isEditing: false})
     }
@@ -41,7 +36,7 @@ class Ticket extends React.Component {
 
         bootbox.confirm("Are you sure want to delete ticket?", (result) => {
             if (result) {
-                TicketsCollection.remove(ticket._id);
+                Meteor.call('tickets.remove', ticket._id);
             }
         });
     }
@@ -56,7 +51,7 @@ class Ticket extends React.Component {
         const timeStr = moment(ticket.createdAt).format('MMMM Do YYYY, h:mm:ss a');
 
 
-        if (isEditing) {
+        if (isEditing && userId) {
             return (
                 <div className="well">
                     <form onSubmit={(e) => this.handleUpdateSubmit(e)}>

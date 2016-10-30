@@ -14,6 +14,12 @@ class Tickets extends React.Component {
             )
         });
 
+        if (!renderedTickets.length){
+            return (
+                <div className="text-muted text-center">No tickets! Try use another filter or create a new one.</div>
+            )
+        }
+
         return (
             <div>
                 {renderedTickets}

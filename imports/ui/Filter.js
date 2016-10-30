@@ -26,7 +26,7 @@ class Filter extends React.Component {
 }
 
 export default createContainer(() => {
-    const filter = Session.get('filter');
+    const filter = Session.get('filter') || '';
     return {
         filter
     }
