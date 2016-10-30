@@ -1,0 +1,18 @@
+{
+  "name": "tickets",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "bcrypt": "^0.8.7",
+    "bootbox": "^4.4.0",
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.1.1",
+    "meteor-node-stubs": "~0.2.0",
+    "react": "^15.3.2",
+    "react-addons-pure-render-mixin": "^15.3.2",
+    "react-bootstrap": "^0.30.6",
+    "react-dom": "^15.3.2"
+  }
+}
