@@ -4,7 +4,7 @@ import {check} from "meteor/check";
 
 export const Tickets = new Mongo.Collection('tickets');
 
-if (Meteor.isServer){
+if (Meteor.isServer) {
     Meteor.publish('tickets', () => {
         return Tickets.find();
     })
@@ -15,7 +15,7 @@ Meteor.methods({
         check(title, String);
         check(content, String);
 
-        if (! this.userId){
+        if (!this.userId) {
             throw new Meteor.Error('not-authorized');
         }
 
@@ -24,6 +24,7 @@ Meteor.methods({
             content,
             owner: this.userId,
             username: Meteor.users.findOne(this.userId).username,
+            comments: [],
             createdAt: new Date()
         });
     },
@@ -42,6 +43,25 @@ Meteor.methods({
                 title,
                 content,
                 updatedAt: new Date()
+            }
+        })
+    },
+    'tickets.addComment'(ticketId, content){
+        check(ticketId, String);
+        check(content, String);
+
+        if (!this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
+        Tickets.update(ticketId, {
+            $push: {
+                'comments': {
+                    content,
+                    owner: this.userId,
+                    username: Meteor.users.findOne(this.userId).username,
+                    createdAt: new Date()
+                }
             }
         })
     }

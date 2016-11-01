@@ -1,11 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Tickets as TicketsCollection} from "/imports/api/tickets";
 import {FormGroup, Button, FormControl, ControlLabel} from "react-bootstrap";
 import bootbox from "bootbox";
 import moment from "moment";
 import {createContainer} from "meteor/react-meteor-data";
-import {Meteor} from 'meteor/meteor';
+import {Meteor} from "meteor/meteor";
 
 class Ticket extends React.Component {
 
@@ -14,6 +13,7 @@ class Ticket extends React.Component {
 
         this.state = {
             isEditing: false,
+            showComments: false
         }
     }
 
@@ -45,9 +45,54 @@ class Ticket extends React.Component {
         this.setState({isEditing: false})
     }
 
+    handleSubmitComment(e) {
+        const {ticket} = this.props;
+        e.preventDefault();
+
+        const comment = ReactDOM.findDOMNode(this.refs.comment).value;
+        ReactDOM.findDOMNode(this.refs.comment).value = '';
+
+        Meteor.call('tickets.addComment', ticket._id, comment);
+    }
+
+    renderComments() {
+
+        const {ticket} = this.props;
+
+        const comments = (ticket.comments || []).map((comment, index) => {
+            return (
+                <div key={index}><span className="text-muted">{comment.username}</span>: {comment.content}</div>
+            )
+        });
+
+        return (
+            <div>
+                <h5>Comments:
+                    <button className="btn btn-xs btn-default" onClick={() => this.setState({showComments: false})}>
+                        close
+                    </button>
+                </h5>
+                {comments.length ? comments : <span className="text-muted">No comments yet</span>}
+
+                <hr/>
+                <div>
+                    <form onSubmit={(e) => this.handleSubmitComment(e)}>
+                        <div className="input-group">
+                            <input type="text" className="form-control" ref="comment" placeholder="Your comment..."/>
+                            <span className="input-group-btn">
+                                <button type="submit" className="btn btn-primary">Send</button>
+                            </span>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )
+    }
+
     render() {
         const {ticket, userId} = this.props;
-        const {isEditing} = this.state;
+        const {isEditing, showComments} = this.state;
         const timeStr = moment(ticket.createdAt).format('MMMM Do YYYY, h:mm:ss a');
 
 
@@ -83,18 +128,33 @@ class Ticket extends React.Component {
         } else {
             return (
                 <div style={{marginBottom: 20}}>
-                    <div>
-                        <strong>{ticket.title}</strong>&nbsp;<span className="text-muted">({ticket.username} | {timeStr})</span>
+                    <div className="row" style={{marginBottom: 10}}>
+                        <div className="col-md-6">
+                            <strong>{ticket.title}</strong>&nbsp;
+                            {userId
+                                ?
+                                <Button onClick={() => this.setState({isEditing: true})} bsSize="xs">Edit</Button>
+                                :
+                                null
+                            }
+                        </div>
+                        <div className="col-md-6 text-right">
+                            <span className="text-muted">({ticket.username} | {timeStr})</span>
+                        </div>
                     </div>
+
                     <div>
                         <pre>{ticket.content}</pre>
                     </div>
 
-                    {userId
+                    {showComments
                         ?
-                        <Button onClick={() => this.setState({isEditing: true})}>Edit</Button>
+                        this.renderComments()
                         :
-                        null
+                        <div className="btn btn-sm btn-info"
+                             onClick={() => this.setState({showComments: true})}>
+                            Comments ({ticket.comments ? ticket.comments.length : 0})
+                        </div>
                     }
 
                 </div>

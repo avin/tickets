@@ -9,8 +9,6 @@ class Tickets extends React.Component {
     render() {
         const {tickets} = this.props;
 
-        console.log(tickets);
-
         const renderedTickets = tickets.map(ticket => {
             return (
                 <Ticket ticket={ticket} key={ticket._id}/>
